@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h2 class="m-3">
+{% if category == 1 %}
+Нужен бокс? Отлично! Выбирайте.
+{% elif category == 2 %}
+Хотите сдать на хранение? Отлично! Выбирайте.
+{% else %}
+Уточните ваш выбор
+{% endif %}
+</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h5>Пожалуйста, уточните данные:</h5>
+            <form action="." method="post" novalidate>
+                {{ order_unit_form|crispy }}
+                {% csrf_token %}
+                <p></p>
+                {% if user.is_authenticated %}
+                    <p><input type="submit" value="Продолжить"></p>
+                {% else %}
+                    <p><input type="submit" name="have_account" value="У меня уже есть аккаунт"></p>
+                    <p><input type="submit" name="want_account" value="Нет аккаунта, но хочу"></p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+<div class="row">
+<h2>Стоимость аренды</h2>
+<h3 id="rent_price">{{ initial_price }}</h3>
+</div>
+
+{% endblock %}
+
+{% block jsfiles %}
+<script>
+window.onload = function(e) {
+
+let unitOptions = document.querySelectorAll('.unit-options');
+
+for (var i = 0; i < unitOptions.length; i++) {
+  item = unitOptions[i];
+  icon = item.attributes["data-icon"].value;
+  content = item.innerHTML;
+  item.innerHTML = icon + ' ' + content;
+  }
+  
+}
+</script>
+
+
+<script>
+    $("#id_unit").change(function () {
+      var unit_id = $(this).val();
+      var quantity = $("#id_quantity").val();
+      var duration = $("#id_rent_duration").val();
+      var warehouse_id = $("#id_warehouse").val();
+
+      $.ajax({
+        url: '{% url "get_unit_price" %}',
+        data: {
+          'unit_id': unit_id,
+          'quantity': quantity,
+          'duration': duration,
+          'warehouse_id': warehouse_id,
+        },
+        dataType: 'json',
+        success: function (data) {
+          document.getElementById("rent_price").innerHTML = data.price;
+        }
+      });
+
+    });
+
+
+    $("#id_quantity").change(function () {
+      var quantity = $(this).val();
+      var unit_id = $("#id_unit").val();
+      var duration = $("#id_rent_duration").val();
+      var warehouse_id = $("#id_warehouse").val();
+
+      $.ajax({
+        url: '{% url "get_unit_price" %}',
+        data: {
+          'unit_id': unit_id,
+          'quantity': quantity,
+          'duration': duration,
+          'warehouse_id': warehouse_id,
+        },
+        dataType: 'json',
+        success: function (data) {
+          document.getElementById("rent_price").innerHTML = data.price;
+        }
+      });
+
+    });
+
+    $("#id_rent_duration").change(function () {
+      var duration = $(this).val();
+      var unit_id = $("#id_unit").val();
+      var quantity = $("#id_quantity").val();
+      var warehouse_id = $("#id_warehouse").val();
+
+      $.ajax({
+        url: '{% url "get_unit_price" %}',
+        data: {
+          'unit_id': unit_id,
+          'quantity': quantity,
+          'duration': duration,
+          'warehouse_id': warehouse_id,
+        },
+        dataType: 'json',
+        success: function (data) {
+          document.getElementById("rent_price").innerHTML = data.price;
+        }
+      });
+
+    });    
+
+    $("#id_warehouse").change(function () {
+      var warehouse_id = $(this).val();
+      var unit_id = $("#id_unit").val();
+      var quantity = $("#id_quantity").val();
+      var duration = $("#id_rent_duration").val();
+
+      $.ajax({
+        url: '{% url "get_unit_price" %}',
+        data: {
+          'unit_id': unit_id,
+          'quantity': quantity,
+          'duration': duration,
+          'warehouse_id': warehouse_id,
+        },
+        dataType: 'json',
+        success: function (data) {
+          document.getElementById("rent_price").innerHTML = data.price;
+        }
+      });
+
+    });
+
+
+
+  </script>
+{% endblock %}  
